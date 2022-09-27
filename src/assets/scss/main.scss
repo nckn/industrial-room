@@ -290,7 +290,7 @@ canvas {
 
   z-index: -1;
   
-  pointer-events: none;
+  // pointer-events: none;
   
   &.container--enabled {
     pointer-events: all;
