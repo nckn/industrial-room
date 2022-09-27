@@ -1,0 +1,83 @@
+[
+  {
+    "obj": null,
+    "isPlaying": false,
+    "audio": null,
+    "name": "Roomtone",
+    "filename": "backtrack_roomtone_01.mp3",
+    "type": "sun",
+    "desc": "As close to silence as we can ever get."
+  },
+  {
+    "obj": null,
+    "isPlaying": false,
+    "audio": null,
+    "name": "Infrasound",
+    "filename": "sinelike-bass-tone-c.mp3",
+    "type": "cube",
+    "desc": "The Hum. A Deep dull voice."
+  },
+  {
+    "obj": null,
+    "isPlaying": false,
+    "audio": null,
+    "name": "Deep blow",
+    "filename": "deep-blow.mp3",
+    "type": "pyramid",
+    "desc": "The deepest of the deep."
+  },
+  {
+    "obj": null,
+    "isPlaying": false,
+    "audio": null,
+    "name": "A faint echo with no origin",
+    "filename": "diving-bell-1.mp3",
+    "type": "sphere",
+    "desc": "There is hope in the winds from the east."
+  },
+  {
+    "obj": null,
+    "isPlaying": false,
+    "audio": null,
+    "name": "Airwaves 2",
+    "filename": "pad-slow-motion-tone-fis5-d6.mp3",
+    "type": "sphere",
+    "desc": "And what is this?"
+  },
+  {
+    "obj": null,
+    "isPlaying": false,
+    "audio": null,
+    "name": "Airwaves 1",
+    "filename": "pad-slow-motion-tone-d4.mp3",
+    "type": "sphere",
+    "desc": "There it is again."
+  },
+  {
+    "obj": null,
+    "isPlaying": false,
+    "audio": null,
+    "name": "A heartbeat",
+    "filename": "heartbeat.mp3",
+    "type": "cube",
+    "desc": "The comfort in something being alive."
+  },
+  {
+    "obj": null,
+    "isPlaying": false,
+    "audio": null,
+    "name": "Distant roar",
+    "filename": "double-bass-e0.mp3",
+    "type": "cube",
+    "desc": "A haunting vroom from far away."
+  },
+  {
+    "obj": null,
+    "isPlaying": false,
+    "audio": null,
+    "name": "Sitar",
+    "filename": "sitar1-motif-1.mp3",
+    "type": "pyramid",
+    "desc": "there is a sound out there that nobody have ever heard."
+  }
+]

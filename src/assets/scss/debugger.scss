@@ -1,0 +1,28 @@
+.debugger {
+  width: 300px;
+  height: auto;
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  padding: 12px;
+  background: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  z-index: 1111;
+  .debugger__row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    .debugger__row__label {
+      
+    }
+    .debugger__row__title {
+      width: 140px;
+      display: flex;
+      justify-content: space-between;
+      span {
+        width: 60px;
+      }
+    }
+  }
+}

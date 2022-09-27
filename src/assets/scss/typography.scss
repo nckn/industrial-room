@@ -1,0 +1,40 @@
+// $font_path: '../../../static/fonts/';
+$font_path: '../../fonts/';
+
+// Base
+// @font-face {
+//   font-family: "SuisseBPIntlRegular";
+//   src: url($font_path + 'SuisseBPIntl-Regular.otf');
+//   font-weight: normal;
+//   font-style: normal;
+// }
+
+@font-face {
+  font-family: 'FontRegular';
+  src: url($font_path + 'lexend-deca/LexendDeca-VariableFont_wght.ttf');
+  // src: url('../public/fonts/Inter-Regular.woff2') format('woff2'),
+  //     url('../public/fonts/Inter-Regular.woff') format('woff');
+  // font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: 'FontRegular', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: 0.35;
+}
+
+h2 {
+  font-size: 4rem;
+}
+
+h3 {
+  font-size: 2rem;
+}
+
+p {
+  font-size: 1rem;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Life - Just another day at the office</title>
+</head>
+<body>
+  <!-- ghost-master -->
+  <!-- <div class="ghost-master"></div> -->
+  <!-- master-container -->
+  <div class="master-container" asscroll-container>
+    <canvas class="webgl"></canvas>
+    <!-- <div class="loader-overlay">
+      <div class="sound-button">Play</div>
+    </div> -->
+    
+    <!-- Navigation items - start -->
+    <div class="nav-item anim--nav-tl" style="opacity: 0;">About</div>
+    <!-- <div class="nav-item anim--nav-tr">Projects</div> -->
+    <div class="nav-item anim--nav-br" id="triggerVideoCall" style="opacity: 0;">Contact us</div>
+    <!-- <div class="nav-item anim--nav-bl">Home</div> -->
+    <!-- Navigation items - end -->
+
+    <video id="video" style="display:none" autoplay playsinline></video>
+    <div class="popover">
+      <div class="dot"></div>
+      <div class="annotation">
+        <!-- <div class="info-line"></div> -->
+        <svg viewBox="0 0 200 200" id="theSvgNoiseShape">
+          <defs>
+            <linearGradient id="gradient" gradientTransform="rotate(90)">
+              <stop id="gradientStop1" offset="0%" stop-color="var(--startColor)" />
+              <stop id="gradientStop2 " offset="100%" stop-color="var(--stopColor)" />
+            </linearGradient>
+          </defs>
+          <path id="circlePath" d="" fill="url('#gradient')"></path>
+        </svg>
+        <div class="annotation__textwrapper">
+          <div class="annotation__title">
+            <h3 class="annotation__title__text bold-it anim-type-axis-y anim">Title</h3>
+          </div>
+          <div class="annotation__subtitle">
+            <p class="annotation__subtitle__text anim-type-axis-y anim">Subtitle</p>
+          </div>
+          <div class="annotation__paragraph">
+            <p class="annotation__paragraph__text anim-type-axis-y anim">This is a longer description that is meant to accompany the Title and subtitle</p>
+          </div>
+        </div>
+      </div><!-- annotation - end -->
+    </div><!-- popover - end -->
+  </div><!-- master-container - end -->
+</body>
+</html>
