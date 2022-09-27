@@ -1,9 +1,10 @@
 import './assets/scss/main.scss'
 
 import * as THREE from 'three'
-import ASScroll from '@ashthornton/asscroll'
+// import ASScroll from '@ashthornton/asscroll'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 import * as dat from 'dat.gui'
 import gsap, { Sine } from 'gsap'
