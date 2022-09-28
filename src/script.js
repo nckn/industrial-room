@@ -3,6 +3,7 @@ import './assets/scss/main.scss'
 import * as THREE from 'three'
 // import ASScroll from '@ashthornton/asscroll'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 // import * as THREE from '../build/three.module.js';
 
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
@@ -168,6 +169,21 @@ const envmapPhysicalParsReplace = /* glsl */`
 #endif
 `;
 
+// Texture loader
+const textureLoader = new THREE.TextureLoader()
+
+const bakedSpaceTexture = textureLoader.load( 'textures/industrial-room.jpg' )
+bakedSpaceTexture.flipY = false
+bakedSpaceTexture.encoding = THREE.sRGBEncoding
+// Floor specific material
+const bakedSpaceMaterialFloor = new THREE.MeshStandardMaterial({
+  map: bakedSpaceTexture,
+  side: THREE.DoubleSide
+  // alphaMap: bakedFloorTextureAlphaMap,
+  // aoMapIntensity: 0.2,
+  // transparent: true
+})
+
 // scene size
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -175,20 +191,81 @@ const HEIGHT = window.innerHeight;
 // camera
 const VIEW_ANGLE = 45;
 const ASPECT = WIDTH / HEIGHT;
-const NEAR = 1;
-const FAR = 800;
+const NEAR = 0.01;
+const FAR = 20000;
 
 let camera, cubeCamera, scene, renderer, container;
 
-let controls;
+let controls, gltfLoader;
 
 let groundPlane, wallMat;
 
+// GLTF loader
+gltfLoader = new GLTFLoader()
+
 init();
 addEventListeners()
+loadScene()
 
 function addEventListeners() {
   window.addEventListener('resize', onResize)
+}
+
+function loadScene() {
+  gltfLoader.load(
+    // 'models/typography-in-3d_1a.glb', // Mine from landscape-playground.blend
+    // 'models/typography-in-3d_1b.glb', // Mine from landscape-playground.blend
+    'models/industrial-room.glb', //
+
+    (gltf) => {
+      // Traverse scene if wanting to look for things and names
+      gltf.scene.traverse( child => {
+        
+        // Log the object / mesh name
+        console.log(child.name)
+
+        // First hide all the objects we do not want to see 
+        // child.name === 'Floor' ||
+        if (
+          child.name === 'Floor' ||
+          child.name === 'Floor002' ||
+          child.name === 'Floor004' ||
+          child.name === 'Wall4' ||
+          child.name === 'Wall2' ||
+          child.name === 'Cylinder' ||
+          child.name === 'Cylinder001' ||
+          child.name === 'Cube'
+        ) {
+          child.material = bakedSpaceMaterialFloor
+
+          // child.scale.set(1)
+        }
+        
+        if (
+          child.name === 'Floor' ||
+          child.name === 'Floor004'
+        ) {
+          child.visible = false
+        }
+
+      })
+
+      // lightBoxLarge.visible = false
+      // boxLightLarge.visible = false
+
+      let groupScene = new THREE.Group()
+
+      // gltf.scene.scale.set(8, 8, 8)
+      gltf.scene.scale.set(6, 6, 6)
+      gltf.scene.position.set(0, -40, 0)
+
+      groupScene.add(gltf.scene)
+      scene.add(groupScene)
+
+    }
+  )
+
+  addLights()
 }
 
 function init() {
@@ -252,10 +329,14 @@ function init() {
 
   // ground floor ( with box projected environment mapping )
   const loader = new THREE.TextureLoader();
-  const rMap = loader.load('textures/lavatile.jpg');
+
+  // const rMap = loader.load('textures/lavatile.jpg');
+  // const rMap = loader.load('textures/seamless-pattern-organic-texture.jpg');
+  const rMap = loader.load('textures/pexels-photo-3530117.jpg');
+  
   rMap.wrapS = THREE.RepeatWrapping;
   rMap.wrapT = THREE.RepeatWrapping;
-  rMap.repeat.set(2, 1);
+  rMap.repeat.set(1, 1);
 
   const defaultMat = new THREE.MeshPhysicalMaterial({
     roughness: 1,
@@ -264,7 +345,8 @@ function init() {
   });
 
   const boxProjectedMat = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#ffffff'),
+    // color: new THREE.Color('#ffffff'),
+    color: new THREE.Color('#222222'),
     roughness: 1,
     envMap: cubeRenderTarget.texture,
     roughnessMap: rMap
@@ -291,7 +373,7 @@ function init() {
 
   };
 
-  groundPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry(200, 100, 100), boxProjectedMat);
+  groundPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry(200, 200, 100), boxProjectedMat);
   groundPlane.rotateX(- Math.PI / 2);
   groundPlane.position.set(0, - 49, 0);
   scene.add(groundPlane);
@@ -319,24 +401,26 @@ function init() {
   const planeBack1 = new THREE.Mesh(planeGeo, wallMat);
   planeBack1.position.z = - 50;
   planeBack1.position.x = - 50;
-  scene.add(planeBack1);
 
   const planeBack2 = new THREE.Mesh(planeGeo, wallMat);
   planeBack2.position.z = - 50;
   planeBack2.position.x = 50;
-  scene.add(planeBack2);
 
   const planeFront1 = new THREE.Mesh(planeGeo, wallMat);
   planeFront1.position.z = 50;
   planeFront1.position.x = - 50;
   planeFront1.rotateY(Math.PI);
-  scene.add(planeFront1);
 
   const planeFront2 = new THREE.Mesh(planeGeo, wallMat);
   planeFront2.position.z = 50;
   planeFront2.position.x = 50;
   planeFront2.rotateY(Math.PI);
-  scene.add(planeFront2);
+
+  // Add walls
+  // scene.add(planeBack1);
+  // scene.add(planeBack2);
+  // scene.add(planeFront1);
+  // scene.add(planeFront2);
 
   const planeRight = new THREE.Mesh(planeGeo, wallMat);
   planeRight.position.x = 100;
@@ -407,6 +491,17 @@ function onResize() {
 
   render()
 
+}
+
+function addLights() {
+  // Ambient light
+  const light = new THREE.AmbientLight( 0x909090, 0.25 ) // soft white light
+  scene.add( light )
+  
+  // Directional light
+  let directionalLight = new THREE.DirectionalLight(0xffffff, 0.25)
+  directionalLight.position.set(0, 8, 0)
+  // scene.add(directionalLight)
 }
 
 function render() {
