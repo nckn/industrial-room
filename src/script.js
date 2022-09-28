@@ -237,7 +237,8 @@ function loadScene() {
           child.name === 'Cube'
         ) {
           child.material = bakedSpaceMaterialFloor
-
+          // Be invisible if seen from back
+          child.material.side = THREE.FrontSide;
           // child.scale.set(1)
         }
         
@@ -257,7 +258,7 @@ function loadScene() {
 
       // gltf.scene.scale.set(8, 8, 8)
       gltf.scene.scale.set(6, 6, 6)
-      gltf.scene.position.set(0, -40, 0)
+      gltf.scene.position.set(0, -51.5, 0)
 
       groupScene.add(gltf.scene)
       scene.add(groupScene)
@@ -373,7 +374,7 @@ function init() {
 
   };
 
-  groundPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry(200, 200, 100), boxProjectedMat);
+  groundPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry(400, 400, 100), boxProjectedMat);
   groundPlane.rotateX(- Math.PI / 2);
   groundPlane.position.set(0, - 49, 0);
   scene.add(groundPlane);
@@ -439,9 +440,10 @@ function init() {
 
   RectAreaLightUniformsLib.init();
 
+  const lampY = 92
   // Area light 1 - orange
   const rectLightOne = new THREE.RectAreaLight(0xf3aaaa, intensity, width, height);
-  rectLightOne.position.set(-72, 100, -72);
+  rectLightOne.position.set(-72, lampY, -72);
   rectLightOne.lookAt(-72, 0, -72);
   // rectLightOne.rotateX(-Math.PI / 2);
   scene.add(rectLightOne);
@@ -451,7 +453,7 @@ function init() {
   
   // rect light 2 - orange
   const rectLightTwo = new THREE.RectAreaLight(0xf3aaaa, intensity, width, height);
-  rectLightTwo.position.set(72, 100, -72);
+  rectLightTwo.position.set(72, lampY, -72);
   rectLightTwo.lookAt(72, 0, -72);
   // rectLightTwo.rotateX(-Math.PI / 2);
   scene.add(rectLightTwo);
@@ -461,7 +463,7 @@ function init() {
 
   // rect light 3 - blue
   const rectLightThr = new THREE.RectAreaLight(0x9aaeff, intensity, width, height);
-  rectLightThr.position.set(-72, 100, 72);
+  rectLightThr.position.set(-72, lampY, 72);
   rectLightThr.lookAt(-72, 0, 72);
   scene.add(rectLightThr);
   const rectLightThrHelper = new RectAreaLightHelper(rectLightThr);
@@ -470,7 +472,7 @@ function init() {
   
   // rect light 4 - blue
   const rectLightFou = new THREE.RectAreaLight(0x9aaeff, intensity, width, height);
-  rectLightFou.position.set(72, 100, 72);
+  rectLightFou.position.set(72, lampY, 72);
   rectLightFou.lookAt(72, 0, 72);
   scene.add(rectLightFou);
   const rectLightFouHelper = new RectAreaLightHelper(rectLightFou);
