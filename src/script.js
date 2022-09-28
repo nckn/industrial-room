@@ -310,7 +310,7 @@ function init() {
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, - 10, 0);
-  controls.maxDistance = 400;
+  controls.maxDistance = 800;
   controls.minDistance = 10;
   controls.addEventListener('change', render);
   controls.update();
@@ -425,12 +425,12 @@ function init() {
   const planeRight = new THREE.Mesh(planeGeo, wallMat);
   planeRight.position.x = 100;
   planeRight.rotateY(- Math.PI / 2);
-  scene.add(planeRight);
+  // scene.add(planeRight);
 
   const planeLeft = new THREE.Mesh(planeGeo, wallMat);
   planeLeft.position.x = - 100;
   planeLeft.rotateY(Math.PI / 2);
-  scene.add(planeLeft);
+  // scene.add(planeLeft);
 
   //lights
   const width = 50;
@@ -439,21 +439,43 @@ function init() {
 
   RectAreaLightUniformsLib.init();
 
-  const blueRectLight = new THREE.RectAreaLight(0xf3aaaa, intensity, width, height);
-  blueRectLight.position.set(99, 5, 0);
-  blueRectLight.lookAt(0, 5, 0);
-  scene.add(blueRectLight);
+  // Area light 1 - orange
+  const rectLightOne = new THREE.RectAreaLight(0xf3aaaa, intensity, width, height);
+  rectLightOne.position.set(-72, 100, -72);
+  rectLightOne.lookAt(-72, 0, -72);
+  // rectLightOne.rotateX(-Math.PI / 2);
+  scene.add(rectLightOne);
+  const rectLightOneHelper = new RectAreaLightHelper(rectLightOne);
+  rectLightOne.add(rectLightOneHelper);
+  // rectLight 1 - end
+  
+  // rect light 2 - orange
+  const rectLightTwo = new THREE.RectAreaLight(0xf3aaaa, intensity, width, height);
+  rectLightTwo.position.set(72, 100, -72);
+  rectLightTwo.lookAt(72, 0, -72);
+  // rectLightTwo.rotateX(-Math.PI / 2);
+  scene.add(rectLightTwo);
+  const rectLightTwoHelper = new RectAreaLightHelper(rectLightTwo);
+  rectLightTwo.add(rectLightTwoHelper);
+  // rectLight 2 - end
 
-  const blueRectLightHelper = new RectAreaLightHelper(blueRectLight);
-  blueRectLight.add(blueRectLightHelper);
-
-  const redRectLight = new THREE.RectAreaLight(0x9aaeff, intensity, width, height);
-  redRectLight.position.set(- 99, 5, 0);
-  redRectLight.lookAt(0, 5, 0);
-  scene.add(redRectLight);
-
-  const redRectLightHelper = new RectAreaLightHelper(redRectLight);
-  redRectLight.add(redRectLightHelper);
+  // rect light 3 - blue
+  const rectLightThr = new THREE.RectAreaLight(0x9aaeff, intensity, width, height);
+  rectLightThr.position.set(-72, 100, 72);
+  rectLightThr.lookAt(-72, 0, 72);
+  scene.add(rectLightThr);
+  const rectLightThrHelper = new RectAreaLightHelper(rectLightThr);
+  rectLightThr.add(rectLightThrHelper);
+  // rect light 3 - end
+  
+  // rect light 4 - blue
+  const rectLightFou = new THREE.RectAreaLight(0x9aaeff, intensity, width, height);
+  rectLightFou.position.set(72, 100, 72);
+  rectLightFou.lookAt(72, 0, 72);
+  scene.add(rectLightFou);
+  const rectLightFouHelper = new RectAreaLightHelper(rectLightFou);
+  rectLightFou.add(rectLightFouHelper);
+  // rect light 3 - end
 
   render();
 
