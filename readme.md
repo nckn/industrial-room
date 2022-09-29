@@ -17,6 +17,7 @@ npm run build
 
 TODO
 - post-processing
+- add scroll camera track and allow pan on top of this
 - add sound from industrial space
 - add volumetric spot
 - add typography
