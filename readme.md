@@ -16,7 +16,12 @@ npm run build
 ```
 
 TODO
-- add shader from ex. 35
+- post-processing
+- add sound from industrial space
+- add volumetric spot
+- add typography
+- make into object
+- 
 - tv shader w/ post-processing lines (type)
 - 
 
