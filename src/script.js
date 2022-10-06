@@ -337,8 +337,8 @@ function init() {
   
   // const rMap = loader.load('textures/pexels-photo-3530117.jpg');
   
-  // const rMap = loader.load('textures/pexels-photo-12192759.jpg');
-  const rMap = loader.load('textures/pexels-photo-13214152.jpg');
+  const rMap = loader.load('textures/pexels-photo-12192759.jpg');
+  // const rMap = loader.load('textures/pexels-photo-13214152.jpg');
   
   rMap.wrapS = THREE.RepeatWrapping;
   rMap.wrapT = THREE.RepeatWrapping;
