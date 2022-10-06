@@ -313,6 +313,7 @@ function init() {
   controls.target.set(0, - 10, 0);
   controls.maxDistance = 800;
   controls.minDistance = 10;
+  controls.enableDamping = true
   controls.addEventListener('change', render);
   controls.update();
 
@@ -333,7 +334,10 @@ function init() {
 
   // const rMap = loader.load('textures/lavatile.jpg');
   // const rMap = loader.load('textures/seamless-pattern-organic-texture.jpg');
-  const rMap = loader.load('textures/pexels-photo-3530117.jpg');
+  
+  // const rMap = loader.load('textures/pexels-photo-3530117.jpg');
+  
+  const rMap = loader.load('textures/pexels-photo-12192759.jpg');
   
   rMap.wrapS = THREE.RepeatWrapping;
   rMap.wrapT = THREE.RepeatWrapping;
@@ -513,7 +517,7 @@ function onResize() {
   renderer.setSize(width, height)
   // controls.update()
 
-  render()
+  // render()
 
 }
 
@@ -531,5 +535,10 @@ function addLights() {
 function render() {
 
   renderer.render(scene, camera);
+
+  // controls.update()
+
+  console.log(controls)
+  // controls.update();
 
 }

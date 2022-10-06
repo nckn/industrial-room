@@ -16,6 +16,7 @@ npm run build
 ```
 
 TODO
+- make 45 degrees angle on and make subtle cam movement, add fadeout to floor and walls, then a super case to show people.
 - post-processing
 - add scroll camera track and allow pan on top of this
 - add sound from industrial space
