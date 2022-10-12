@@ -314,7 +314,7 @@ function init() {
   controls.maxDistance = 800;
   controls.minDistance = 10;
   controls.enableDamping = true
-  controls.addEventListener('change', render);
+  // controls.addEventListener('change', render);
   controls.update();
 
   // cube camera for environment map
@@ -516,7 +516,7 @@ function onResize() {
   
   camera.updateProjectionMatrix()
   renderer.setSize(width, height)
-  // controls.update()
+  controls.update()
 
   // render()
 
@@ -524,7 +524,7 @@ function onResize() {
 
 function addLights() {
   // Ambient light
-  const light = new THREE.AmbientLight( 0x909090, 0.25 ) // soft white light
+  const light = new THREE.AmbientLight( 0x909090, 0.5 ) // 0.25 soft white light
   scene.add( light )
   
   // Directional light
@@ -540,6 +540,8 @@ function render() {
   // controls.update()
 
   console.log(controls)
-  // controls.update();
+  controls.update();
+
+  requestAnimationFrame( render );
 
 }
