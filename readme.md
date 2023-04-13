@@ -1,4 +1,7 @@
-# Three.js Journey
+# Industrial Space
+
+### Blender model
+iCloud Drive/3D/konrad-studio/industrial-room/industrial-room.blend
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
@@ -75,4 +78,4 @@ Info
 - The width of the .size-determiner determines the scroll length
 
 Deploy
-https://typography-in-3d.netlify.app
+TBD
