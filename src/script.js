@@ -202,6 +202,7 @@ let controls, gltfLoader;
 let groundPlane, wallMat;
 
 let uvsWeWantToCopy = ''
+const planeSize = 60
 
 // GLTF loader
 gltfLoader = new GLTFLoader()
@@ -250,6 +251,13 @@ function loadScene() {
         if (child.name === 'Floor') {
           child.visible = false
           uvsWeWantToCopy = child.geometry.attributes.uv.array
+          const boundingBox = new THREE.Box3().setFromObject(child);
+          const width = boundingBox.max.x - boundingBox.min.x;
+          const height = boundingBox.max.y - boundingBox.min.y;
+          const depth = boundingBox.max.z - boundingBox.min.z;
+          console.log('Width:', width);
+          console.log('Height:', height);
+          console.log('Depth:', depth);
         }
         if (
           child.name === 'Wall2'
@@ -356,16 +364,19 @@ function init() {
     roughness: 1,
     map: bakedSpaceMaterialFloor,
     envMap: cubeRenderTarget.texture,
-    roughnessMap: rMap
+    roughnessMap: rMap,
+    // opacity: 0.2
   });
 
   const boxProjectedMat = new THREE.MeshPhysicalMaterial({
     // color: new THREE.Color('#ffffff'),
     color: new THREE.Color('#222222'),
     roughness: 1,
+    // opacity: 0.2,
     envMap: cubeRenderTarget.texture,
     map: bakedSpaceTexture,
-    roughnessMap: rMap
+    roughnessMap: rMap,
+    side: THREE.DoubleSide
   });
 
   boxProjectedMat.onBeforeCompile = function (shader) {
@@ -389,12 +400,17 @@ function init() {
 
   };
 
-  const floorGeometry = new THREE.PlaneBufferGeometry(400, 400, 100)
-  floorGeometry.setAttribute('uv', new THREE.BufferAttribute(uvsWeWantToCopy, 2))
-  groundPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry(400, 400, 100), boxProjectedMat);
+  // const floorGeometry = new THREE.PlaneBufferGeometry(planeSize, planeSize, 100)
+  const floorGeometry = new THREE.PlaneGeometry(planeSize, planeSize, 100)
+  
+  // Most recent - This should copy the UV info from the Floor, but for now it is just blank
+  // floorGeometry.setAttribute('uv', new THREE.BufferAttribute(uvsWeWantToCopy, 2))
+
+  groundPlane = new THREE.Mesh(floorGeometry, boxProjectedMat);
   groundPlane.rotateX(- Math.PI / 2);
   // groundPlane.position.set(0, - 49, 0);
   groundPlane.position.set(0, - 49, 0);
+  groundPlane.scale.set(6, 6, 6)
   scene.add(groundPlane);
 
   // walls
