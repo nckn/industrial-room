@@ -172,7 +172,8 @@ const envmapPhysicalParsReplace = /* glsl */`
 // Texture loader
 const textureLoader = new THREE.TextureLoader()
 
-const bakedSpaceTexture = textureLoader.load( 'textures/industrial-room.jpg' )
+// const bakedSpaceTexture = textureLoader.load( 'textures/industrial-room.jpg' )
+const bakedSpaceTexture = textureLoader.load( 'textures/industrial-room-1a.jpg' )
 bakedSpaceTexture.flipY = false
 bakedSpaceTexture.encoding = THREE.sRGBEncoding
 // Floor specific material
@@ -200,6 +201,8 @@ let controls, gltfLoader;
 
 let groundPlane, wallMat;
 
+let uvsWeWantToCopy = ''
+
 // GLTF loader
 gltfLoader = new GLTFLoader()
 
@@ -215,7 +218,8 @@ function loadScene() {
   gltfLoader.load(
     // 'models/typography-in-3d_1a.glb', // Mine from landscape-playground.blend
     // 'models/typography-in-3d_1b.glb', // Mine from landscape-playground.blend
-    'models/industrial-room.glb', //
+    // 'models/industrial-room.glb', //
+    'models/industrial-room-1a.glb', //
 
     (gltf) => {
       // Traverse scene if wanting to look for things and names
@@ -228,13 +232,14 @@ function loadScene() {
         // child.name === 'Floor' ||
         if (
           child.name === 'Floor' ||
-          child.name === 'Floor002' ||
-          child.name === 'Floor004' ||
-          child.name === 'Wall4' ||
+          child.name === 'Wall1' ||
           child.name === 'Wall2' ||
+          child.name === 'Wall3' ||
+          child.name === 'Wall4' ||
           child.name === 'Cylinder' ||
           child.name === 'Cylinder001' ||
-          child.name === 'Cube'
+          child.name === 'Cube' ||
+          child.name === 'Chair1'
         ) {
           child.material = bakedSpaceMaterialFloor
           // Be invisible if seen from back
@@ -242,9 +247,12 @@ function loadScene() {
           // child.scale.set(1)
         }
         
+        if (child.name === 'Floor') {
+          child.visible = false
+          uvsWeWantToCopy = child.geometry.attributes.uv.array
+        }
         if (
-          child.name === 'Floor' ||
-          child.name === 'Floor004'
+          child.name === 'Wall2'
         ) {
           child.visible = false
         }
@@ -346,6 +354,7 @@ function init() {
 
   const defaultMat = new THREE.MeshPhysicalMaterial({
     roughness: 1,
+    map: bakedSpaceMaterialFloor,
     envMap: cubeRenderTarget.texture,
     roughnessMap: rMap
   });
@@ -355,6 +364,7 @@ function init() {
     color: new THREE.Color('#222222'),
     roughness: 1,
     envMap: cubeRenderTarget.texture,
+    map: bakedSpaceTexture,
     roughnessMap: rMap
   });
 
@@ -379,8 +389,11 @@ function init() {
 
   };
 
+  const floorGeometry = new THREE.PlaneBufferGeometry(400, 400, 100)
+  floorGeometry.setAttribute('uv', new THREE.BufferAttribute(uvsWeWantToCopy, 2))
   groundPlane = new THREE.Mesh(new THREE.PlaneBufferGeometry(400, 400, 100), boxProjectedMat);
   groundPlane.rotateX(- Math.PI / 2);
+  // groundPlane.position.set(0, - 49, 0);
   groundPlane.position.set(0, - 49, 0);
   scene.add(groundPlane);
 
@@ -539,7 +552,7 @@ function render() {
 
   // controls.update()
 
-  console.log(controls)
+  // console.log(controls)
   controls.update();
 
   requestAnimationFrame( render );
