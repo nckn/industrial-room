@@ -8,6 +8,12 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 // import { OrbitControls } from './jsm/controls/OrbitControls.js';
+
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
+import { BloomPass } from 'three/examples/jsm/postprocessing/BloomPass.js'
+
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js'
 
@@ -173,7 +179,7 @@ const envmapPhysicalParsReplace = /* glsl */`
 const textureLoader = new THREE.TextureLoader()
 
 // const bakedSpaceTexture = textureLoader.load( 'textures/industrial-room.jpg' )
-const bakedSpaceTexture = textureLoader.load( 'textures/industrial-room-1a.jpg' )
+const bakedSpaceTexture = textureLoader.load('textures/industrial-room-1a.jpg')
 bakedSpaceTexture.flipY = false
 bakedSpaceTexture.encoding = THREE.sRGBEncoding
 // Floor specific material
@@ -204,12 +210,91 @@ let groundPlane, wallMat;
 let uvsWeWantToCopy = ''
 const planeSize = 60
 
+let composer = null
+let clock = null
+let delta = null
+let smokeParticles = []
+let geometrySmoke = null
+let materialSmoke = null
+let meshSmoke = null
+let cubeSineDriver = null
+let textGeo = null
+let textTexture = null
+let textMaterial = null
+let smokeTexture = null
+let smokeMaterial = null
+let smokeGeo = null
+let text = null
+let light = null
+let p = null
+
 // GLTF loader
 gltfLoader = new GLTFLoader()
 
-init();
+const initPostprocessing = () => {
+  // create an EffectComposer
+  composer = new EffectComposer(renderer);
+
+  // create a RenderPass and add it to the composer
+  var renderPass = new RenderPass(scene, camera);
+  composer.addPass(renderPass);
+
+  // create a BloomPass and add it to the composer
+  var bloomPass = new BloomPass(
+    1, // strength
+    25, // kernel size
+    4, // sigma
+    256 // resolution
+  );
+  composer.addPass(bloomPass);
+}
+
+const initMisc = () => {
+  clock = new THREE.Clock();
+}
+
+const initSmoke = () => {
+  geometrySmoke = new THREE.BoxGeometry(200, 200, 200);
+  materialSmoke = new THREE.MeshLambertMaterial({ color: 0xaa6666, wireframe: false });
+  meshSmoke = new THREE.Mesh(geometrySmoke, materialSmoke);
+  //scene.add( mesh );
+  cubeSineDriver = 0;
+
+  textGeo = new THREE.PlaneGeometry(300, 300);
+  THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
+  textTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/quickText.png');
+  textMaterial = new THREE.MeshLambertMaterial({ color: 0x00ffff, opacity: 1, map: textTexture, transparent: true, blending: THREE.AdditiveBlending })
+  text = new THREE.Mesh(textGeo, textMaterial);
+  text.position.z = 800;
+  scene.add(text);
+
+  light = new THREE.DirectionalLight(0xffffff, 0.5);
+  light.position.set(-1, 0, 1);
+  scene.add(light);
+
+  smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
+  smokeMaterial = new THREE.MeshLambertMaterial({ color: 0x00dddd, map: smokeTexture, transparent: true });
+  smokeGeo = new THREE.PlaneGeometry(300, 300);
+  smokeParticles = [];
+
+
+  for (p = 0; p < 150; p++) {
+    var particle = new THREE.Mesh(smokeGeo, smokeMaterial);
+    particle.position.set(Math.random() * 500 - 250, Math.random() * 500 - 250, Math.random() * 1000 - 100);
+    particle.rotation.z = Math.random() * 360;
+    scene.add(particle);
+    smokeParticles.push(particle);
+  }
+}
+
+initMisc();
+initScene();
+
+initSmoke();
+
 addEventListeners()
 loadScene()
+
 
 function addEventListeners() {
   window.addEventListener('resize', onResize)
@@ -224,8 +309,8 @@ function loadScene() {
 
     (gltf) => {
       // Traverse scene if wanting to look for things and names
-      gltf.scene.traverse( child => {
-        
+      gltf.scene.traverse(child => {
+
         // Log the object / mesh name
         console.log(child.name)
 
@@ -247,7 +332,7 @@ function loadScene() {
           child.material.side = THREE.FrontSide;
           // child.scale.set(1)
         }
-        
+
         if (child.name === 'Floor') {
           child.visible = false
           uvsWeWantToCopy = child.geometry.attributes.uv.array
@@ -285,7 +370,7 @@ function loadScene() {
   addLights()
 }
 
-function init() {
+function initScene() {
 
   container = document.getElementById('container');
 
@@ -350,12 +435,12 @@ function init() {
 
   // const rMap = loader.load('textures/lavatile.jpg');
   // const rMap = loader.load('textures/seamless-pattern-organic-texture.jpg');
-  
+
   // const rMap = loader.load('textures/pexels-photo-3530117.jpg');
-  
+
   const rMap = loader.load('textures/pexels-photo-12192759.jpg');
   // const rMap = loader.load('textures/pexels-photo-13214152.jpg');
-  
+
   rMap.wrapS = THREE.RepeatWrapping;
   rMap.wrapT = THREE.RepeatWrapping;
   rMap.repeat.set(1, 1);
@@ -402,7 +487,7 @@ function init() {
 
   // const floorGeometry = new THREE.PlaneBufferGeometry(planeSize, planeSize, 100)
   const floorGeometry = new THREE.PlaneGeometry(planeSize, planeSize, 100)
-  
+
   // Most recent - This should copy the UV info from the Floor, but for now it is just blank
   // floorGeometry.setAttribute('uv', new THREE.BufferAttribute(uvsWeWantToCopy, 2))
 
@@ -484,7 +569,7 @@ function init() {
   const rectLightOneHelper = new RectAreaLightHelper(rectLightOne);
   rectLightOne.add(rectLightOneHelper);
   // rectLight 1 - end
-  
+
   // rect light 2 - orange
   const rectLightTwo = new THREE.RectAreaLight(0xf3aaaa, intensity, width, height);
   rectLightTwo.position.set(72, lampY, -72);
@@ -503,7 +588,7 @@ function init() {
   const rectLightThrHelper = new RectAreaLightHelper(rectLightThr);
   rectLightThr.add(rectLightThrHelper);
   // rect light 3 - end
-  
+
   // rect light 4 - blue
   const rectLightFou = new THREE.RectAreaLight(0x9aaeff, intensity, width, height);
   rectLightFou.position.set(72, lampY, 72);
@@ -512,6 +597,8 @@ function init() {
   const rectLightFouHelper = new RectAreaLightHelper(rectLightFou);
   rectLightFou.add(rectLightFouHelper);
   // rect light 3 - end
+
+  initPostprocessing()
 
   render();
 
@@ -542,7 +629,7 @@ function onResize() {
   let height = container.offsetHeight
 
   camera.aspect = width / height
-  
+
   camera.updateProjectionMatrix()
   renderer.setSize(width, height)
   controls.update()
@@ -553,9 +640,9 @@ function onResize() {
 
 function addLights() {
   // Ambient light
-  const light = new THREE.AmbientLight( 0x909090, 0.5 ) // 0.25 soft white light
-  scene.add( light )
-  
+  const light = new THREE.AmbientLight(0x909090, 0.5) // 0.25 soft white light
+  scene.add(light)
+
   // Directional light
   let directionalLight = new THREE.DirectionalLight(0xffffff, 0.25)
   directionalLight.position.set(0, 8, 0)
@@ -564,13 +651,30 @@ function addLights() {
 
 function render() {
 
+  // update your scene and camera here
   renderer.render(scene, camera);
+  // Do it with the FX composer
+  // composer.render()
 
   // controls.update()
 
   // console.log(controls)
   controls.update();
 
-  requestAnimationFrame( render );
+  animate()
 
+  requestAnimationFrame(render);
+
+}
+
+function animate() {
+  delta = clock.getDelta();
+  evolveSmoke()
+}
+
+function evolveSmoke() {
+  var sp = smokeParticles.length;
+  while (sp--) {
+    smokeParticles[sp].rotation.z += (delta * 0.2);
+  }
 }
