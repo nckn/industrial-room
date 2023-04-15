@@ -211,22 +211,7 @@ let uvsWeWantToCopy = ''
 const planeSize = 60
 
 let composer = null
-let clock = null
-let delta = null
-let smokeParticles = []
-let geometrySmoke = null
-let materialSmoke = null
-let meshSmoke = null
-let cubeSineDriver = null
-let textGeo = null
-let textTexture = null
-let textMaterial = null
-let smokeTexture = null
-let smokeMaterial = null
-let smokeGeo = null
-let text = null
-let light = null
-let p = null
+let clock, delta = null
 
 // GLTF loader
 gltfLoader = new GLTFLoader()
@@ -253,44 +238,10 @@ const initMisc = () => {
   clock = new THREE.Clock();
 }
 
-const initSmoke = () => {
-  geometrySmoke = new THREE.BoxGeometry(200, 200, 200);
-  materialSmoke = new THREE.MeshLambertMaterial({ color: 0xaa6666, wireframe: false });
-  meshSmoke = new THREE.Mesh(geometrySmoke, materialSmoke);
-  //scene.add( mesh );
-  cubeSineDriver = 0;
-
-  textGeo = new THREE.PlaneGeometry(300, 300);
-  THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
-  textTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/quickText.png');
-  textMaterial = new THREE.MeshLambertMaterial({ color: 0x00ffff, opacity: 1, map: textTexture, transparent: true, blending: THREE.AdditiveBlending })
-  text = new THREE.Mesh(textGeo, textMaterial);
-  text.position.z = 800;
-  scene.add(text);
-
-  light = new THREE.DirectionalLight(0xffffff, 0.5);
-  light.position.set(-1, 0, 1);
-  scene.add(light);
-
-  smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
-  smokeMaterial = new THREE.MeshLambertMaterial({ color: 0x00dddd, map: smokeTexture, transparent: true });
-  smokeGeo = new THREE.PlaneGeometry(300, 300);
-  smokeParticles = [];
-
-
-  for (p = 0; p < 150; p++) {
-    var particle = new THREE.Mesh(smokeGeo, smokeMaterial);
-    particle.position.set(Math.random() * 500 - 250, Math.random() * 500 - 250, Math.random() * 1000 - 100);
-    particle.rotation.z = Math.random() * 360;
-    scene.add(particle);
-    smokeParticles.push(particle);
-  }
-}
-
 initMisc();
 initScene();
 
-initSmoke();
+// initSmoke();
 
 addEventListeners()
 loadScene()
@@ -445,9 +396,24 @@ function initScene() {
   rMap.wrapT = THREE.RepeatWrapping;
   rMap.repeat.set(1, 1);
 
+  // the space texture again
+  const floorTexture = textureLoader.load('textures/floor-texture.jpg')
+  floorTexture.wrapS = THREE.RepeatWrapping;
+  floorTexture.wrapT = THREE.RepeatWrapping;
+  // floorTexture.repeat.set(0.5, 0.5);
+  // const matrix = new THREE.Matrix3();
+  // matrix.set(
+  //   1, 0, 0,
+  //   0, -1, 0,
+  //   0, 0, 1
+  // );
+  // floorTexture.matrix = matrix;
+  // floorTexture.flipY = false
+  // floorTexture.offset.set(0.0, 0.5);
+
   const defaultMat = new THREE.MeshPhysicalMaterial({
     roughness: 1,
-    map: bakedSpaceMaterialFloor,
+    // map: bakedSpaceMaterialFloor,
     envMap: cubeRenderTarget.texture,
     roughnessMap: rMap,
     // opacity: 0.2
@@ -459,7 +425,7 @@ function initScene() {
     roughness: 1,
     // opacity: 0.2,
     envMap: cubeRenderTarget.texture,
-    map: bakedSpaceTexture,
+    map: floorTexture,
     roughnessMap: rMap,
     side: THREE.DoubleSide
   });
@@ -669,12 +635,5 @@ function render() {
 
 function animate() {
   delta = clock.getDelta();
-  evolveSmoke()
-}
-
-function evolveSmoke() {
-  var sp = smokeParticles.length;
-  while (sp--) {
-    smokeParticles[sp].rotation.z += (delta * 0.2);
-  }
+  // evolveSmoke()
 }
